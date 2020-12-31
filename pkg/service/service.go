@@ -1,8 +1,12 @@
 package service
 
-import "github.com/architectv/merchantx-task/pkg/repository"
+import (
+	"github.com/architectv/merchantx-task/pkg/model"
+	"github.com/architectv/merchantx-task/pkg/repository"
+)
 
 type Offer interface {
+	Get(sellerId, offerId int, substr string) ([]model.Offer, error)
 }
 
 type Service struct {
@@ -10,5 +14,7 @@ type Service struct {
 }
 
 func NewService(repos *repository.Repository) *Service {
-	return &Service{}
+	return &Service{
+		Offer: NewOfferService(repos.Offer),
+	}
 }
