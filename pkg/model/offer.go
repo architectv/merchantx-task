@@ -1,7 +1,6 @@
 package model
 
 type Offer struct {
-	ProductId int    `json:"-" db:"product_id"`
 	SellerId  int    `json:"id" db:"seller_id"`
 	OfferId   int    `json:"offer_id" db:"offer_id"`
 	Name      string `json:"name" db:"name"`

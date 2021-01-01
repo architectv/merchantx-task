@@ -1,24 +1,74 @@
 package handler
 
 import (
+	"errors"
+	"io"
 	"log"
-	"runtime"
+	"os"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/valyala/fasthttp"
 )
 
-func implementMe() {
-	pc, fn, line, _ := runtime.Caller(1)
-	log.Printf("Implement me in %s[%s:%d]\n", runtime.FuncForPC(pc).Name(), fn, line)
+func (h *Handler) putOffers(ctx *fiber.Ctx) error {
+	start := time.Now()
+	type Input struct {
+		Id   int    `json:"id"`
+		Link string `json:"link"`
+	}
+	input := &Input{}
+	if err := ctx.BodyParser(input); err != nil {
+		return ctx.JSON(err)
+	}
+	if input.Id <= 0 || input.Link == "" {
+		return ctx.JSON(errors.New("wrong input"))
+	}
+
+	// TODO: file storage
+	filename := "./tmp.xlsx"
+	err := downloadFile(input.Link, filename)
+	if err != nil {
+		return ctx.JSON(err)
+	}
+	duration := time.Since(start)
+	log.Println("DOWNLOAD:", duration)
+
+	start = time.Now()
+	stat, err := h.services.Offer.Put(input.Id, filename)
+	if err != nil {
+		return ctx.JSON(err)
+	}
+	duration = time.Since(start)
+	log.Println("PUT:", duration)
+
+	return ctx.JSON(stat)
 }
 
-func (h *Handler) put(ctx *fiber.Ctx) error {
-	implementMe()
-	return ctx.SendString("PUT")
+func downloadFile(url, filepath string) error {
+	start := time.Now()
+	var dst []byte
+	_, bodyBytes, err := fasthttp.Get(dst, url)
+
+	duration := time.Since(start)
+	log.Println("LINK:", duration)
+
+	start = time.Now()
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, strings.NewReader(string(bodyBytes)))
+	duration = time.Since(start)
+	log.Println("FILE:", duration)
+	return err
 }
 
-func (h *Handler) get(ctx *fiber.Ctx) error {
+func (h *Handler) getOffers(ctx *fiber.Ctx) error {
 	var sellerId, offerId int
 	var err error
 	substr := ctx.Query("substr")

@@ -18,8 +18,8 @@ func (h *Handler) InitRoutes(router fiber.Router) {
 	{
 		offers := api.Group("/offers")
 		{
-			offers.Put("/", h.put)
-			offers.Get("/", h.get)
+			offers.Put("/", h.putOffers)
+			offers.Get("/", h.getOffers)
 		}
 	}
 }

@@ -22,7 +22,7 @@ func main() {
 		Username: viper.GetString("db.username"),
 		DBName:   viper.GetString("db.dbname"),
 		SSLMode:  viper.GetString("db.sslmode"),
-		Password: viper.GetString("db.password"),
+		Password: viper.GetString("db.password"), // TODO: env password
 	})
 	if err != nil {
 		log.Fatalf("failed to initialize db: %s", err.Error())
