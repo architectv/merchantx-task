@@ -11,12 +11,15 @@ import (
 	"github.com/architectv/merchantx-task/pkg/service"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 func main() {
+	logrus.SetFormatter(new(logrus.JSONFormatter))
+
 	if err := initConfig(); err != nil {
-		log.Fatalf("error initializing configs: %s", err.Error())
+		logrus.Fatalf("error initializing configs: %s", err.Error())
 	}
 
 	db, err := repository.NewPostgresDB(repository.Config{
@@ -25,10 +28,10 @@ func main() {
 		Username: viper.GetString("db.username"),
 		DBName:   viper.GetString("db.dbname"),
 		SSLMode:  viper.GetString("db.sslmode"),
-		Password: viper.GetString("db.password"), // TODO: env password
+		Password: viper.GetString("db.password"),
 	})
 	if err != nil {
-		log.Fatalf("failed to initialize db: %s", err.Error())
+		logrus.Fatalf("failed to initialize db: %s", err.Error())
 	}
 
 	repos := repository.NewRepository(db)
@@ -41,7 +44,7 @@ func main() {
 
 	go func() {
 		if err := app.Listen(viper.GetString("port")); err != nil {
-			log.Fatalf("failed to listen: %s", err.Error())
+			logrus.Fatalf("failed to listen: %s", err.Error())
 		}
 	}()
 
@@ -52,12 +55,12 @@ func main() {
 	<-quit
 
 	log.Println("Gracefully shutting down...")
-	if err := app.Shutdown(); err != nil {
-		log.Printf("error occured on server shutting down: %s", err.Error())
-	}
+	// if err := app.Shutdown(); err != nil {
+	// 	logrus.Errorf("error occured on server shutting down: %s", err.Error())
+	// }
 
 	if err := db.Close(); err != nil {
-		log.Printf("error occured on db connection close: %s", err.Error())
+		logrus.Errorf("error occured on db connection close: %s", err.Error())
 	}
 }
 

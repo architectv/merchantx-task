@@ -1,28 +1,10 @@
 package service
 
 import (
-	"log"
-
 	"github.com/architectv/merchantx-task/pkg/model"
 	"github.com/architectv/merchantx-task/pkg/repository"
 	"github.com/tealeg/xlsx"
 )
-
-type OfferService struct {
-	repo repository.Offer
-}
-
-func NewOfferService(repo repository.Offer) *OfferService {
-	return &OfferService{
-		repo: repo,
-	}
-}
-
-// TODO: return slice of pointers
-func (s *OfferService) Get(sellerId, offerId int, substr string) ([]model.Offer, error) {
-	offers, err := s.repo.Get(sellerId, offerId, substr)
-	return offers, err
-}
 
 const (
 	OfferIdCol   = 0
@@ -32,13 +14,67 @@ const (
 	AvailableCol = 4
 )
 
-func parseXlsx(sellerId int, filename string, stat *model.Statistics) ([]model.Offer, error) {
-	wb, err := xlsx.OpenFile(filename)
-	if err != nil {
+type OfferService struct {
+	repo repository.Offer
+}
+
+func NewOfferService(repo repository.Offer) *OfferService {
+	return &OfferService{repo: repo}
+}
+
+func (s *OfferService) Get(sellerId, offerId int, substr string) ([]*model.Offer, error) {
+	offers, err := s.repo.GetByParams(sellerId, offerId, substr)
+	return offers, err
+}
+
+func (s *OfferService) Put(sellerId int, filename string) (*model.Statistics, error) {
+	stat := new(model.Statistics)
+	if err := s.processXlsx(sellerId, filename, stat); err != nil {
 		return nil, err
 	}
 
-	var offers []model.Offer
+	return stat, nil
+}
+
+func (s *OfferService) isExist(sellerId, offerId int) bool {
+	_, err := s.repo.GetByTuple(sellerId, offerId)
+	return err == nil
+}
+
+func (s *OfferService) process(v *model.Offer, stat *model.Statistics) error {
+	var err error
+	if s.isExist(v.SellerId, v.OfferId) {
+		if v.Available {
+			err = s.repo.Update(v)
+			if err != nil {
+				return err
+			}
+			stat.UpdateCount++
+		} else {
+			err = s.repo.Delete(v.SellerId, v.OfferId)
+			if err != nil {
+				return err
+			}
+			stat.DeleteCount++
+		}
+	} else if v.Available {
+		err = s.repo.Create(v)
+		if err != nil {
+			return err
+		}
+		stat.CreateCount++
+	} else {
+		stat.ErrorCount++
+	}
+
+	return nil
+}
+
+func (s *OfferService) processXlsx(sellerId int, filename string, stat *model.Statistics) error {
+	wb, err := xlsx.OpenFile(filename)
+	if err != nil {
+		return err
+	}
 
 	for _, sh := range wb.Sheets {
 		for j := 0; j < sh.MaxRow; j++ {
@@ -76,60 +112,12 @@ func parseXlsx(sellerId int, filename string, stat *model.Statistics) ([]model.O
 				Quantity:  quantity,
 				Available: available,
 			}
-			log.Println(offer)
 
-			offers = append(offers, offer)
-		}
-	}
-
-	return offers, nil
-}
-
-func (s *OfferService) Put(sellerId int, filename string) (*model.Statistics, error) {
-	stat := new(model.Statistics)
-	offers, err := parseXlsx(sellerId, filename, stat)
-	if err != nil {
-		return nil, err
-	}
-	log.Println(len(offers))
-	for _, v := range offers {
-		s.process(&v, stat)
-	}
-
-	return stat, nil
-}
-
-func (s *OfferService) process(v *model.Offer, stat *model.Statistics) {
-	var err error
-	if s.isExist(v.SellerId, v.OfferId) {
-		if v.Available {
-			log.Println("UPDATE")
-			err = s.repo.Update(v)
-			if err != nil {
-				log.Println(err.Error())
+			if err := s.process(&offer, stat); err != nil {
+				return err
 			}
-			stat.UpdateCount++
-		} else {
-			log.Println("DELETE")
-			err = s.repo.Delete(v.SellerId, v.OfferId)
-			if err != nil {
-				log.Println(err.Error())
-			}
-			stat.DeleteCount++
 		}
-	} else if v.Available {
-		log.Println("CREATE")
-		err = s.repo.Create(v)
-		if err != nil {
-			log.Println(err.Error())
-		}
-		stat.CreateCount++
-	} else {
-		stat.ErrorCount++
 	}
-}
 
-func (s *OfferService) isExist(sellerId, offerId int) bool {
-	_, err := s.repo.GetByTuple(sellerId, offerId)
-	return err == nil
+	return nil
 }

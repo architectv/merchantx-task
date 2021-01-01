@@ -6,7 +6,7 @@ import (
 )
 
 type Offer interface {
-	Get(sellerId, offerId int, substr string) ([]model.Offer, error)
+	Get(sellerId, offerId int, substr string) ([]*model.Offer, error)
 	Put(sellerId int, filename string) (*model.Statistics, error)
 }
 

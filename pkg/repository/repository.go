@@ -6,11 +6,11 @@ import (
 )
 
 type Offer interface {
-	Get(sellerId, offerId int, substr string) ([]model.Offer, error)
-	GetByTuple(sellerId, offerId int) (model.Offer, error)
 	Create(input *model.Offer) error
-	Delete(sellerId, offerId int) error
+	GetByTuple(sellerId, offerId int) (model.Offer, error)
+	GetByParams(sellerId, offerId int, substr string) ([]*model.Offer, error)
 	Update(input *model.Offer) error
+	Delete(sellerId, offerId int) error
 }
 
 type Repository struct {
