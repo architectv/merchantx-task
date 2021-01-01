@@ -2,6 +2,9 @@ package main
 
 import (
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/architectv/merchantx-task/pkg/handler"
 	"github.com/architectv/merchantx-task/pkg/repository"
@@ -35,7 +38,27 @@ func main() {
 	app := fiber.New()
 	app.Use(logger.New())
 	handlers.InitRoutes(app)
-	app.Listen(viper.GetString("port"))
+
+	go func() {
+		if err := app.Listen(viper.GetString("port")); err != nil {
+			log.Fatalf("failed to listen: %s", err.Error())
+		}
+	}()
+
+	log.Println("App started")
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	<-quit
+
+	log.Println("Gracefully shutting down...")
+	if err := app.Shutdown(); err != nil {
+		log.Printf("error occured on server shutting down: %s", err.Error())
+	}
+
+	if err := db.Close(); err != nil {
+		log.Printf("error occured on db connection close: %s", err.Error())
+	}
 }
 
 func initConfig() error {
