@@ -38,7 +38,7 @@ func (r *OfferPostgres) GetByTuple(sellerId, offerId int) (model.Offer, error) {
 	return offer, err
 }
 
-func (r *OfferPostgres) GetByParams(sellerId, offerId int, substr string) ([]*model.Offer, error) {
+func (r *OfferPostgres) GetAllByParams(sellerId, offerId int, substr string) ([]*model.Offer, error) {
 	setValues := make([]string, 0)
 	args := make([]interface{}, 0)
 	argId := 1

@@ -23,7 +23,7 @@ func NewOfferService(repo repository.Offer) *OfferService {
 }
 
 func (s *OfferService) Get(sellerId, offerId int, substr string) ([]*model.Offer, error) {
-	offers, err := s.repo.GetByParams(sellerId, offerId, substr)
+	offers, err := s.repo.GetAllByParams(sellerId, offerId, substr)
 	return offers, err
 }
 
