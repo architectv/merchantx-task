@@ -6,9 +6,11 @@ require (
 	github.com/gofiber/cli v0.0.6 // indirect
 	github.com/gofiber/fiber v1.14.6
 	github.com/gofiber/fiber/v2 v2.3.2
+	github.com/golang/mock v1.3.1
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.0.0
 	github.com/sirupsen/logrus v1.2.0
+	github.com/smartystreets/goconvey v1.6.4
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
 	github.com/tealeg/xlsx v1.0.5

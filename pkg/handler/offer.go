@@ -43,7 +43,7 @@ func (h *Handler) putOffers(ctx *fiber.Ctx) error {
 		return ctx.SendString(err.Error())
 	}
 
-	stat, err := h.services.Offer.Put(input.Id, filename)
+	stat, err := h.services.Offer.PutWithFile(input.Id, filename)
 	if err != nil {
 		ctx.Status(fiber.StatusInternalServerError)
 		return ctx.SendString(err.Error())
@@ -92,7 +92,7 @@ func (h *Handler) getOffers(ctx *fiber.Ctx) error {
 		}
 	}
 
-	offers, err := h.services.Offer.Get(sellerId, offerId, substr)
+	offers, err := h.services.Offer.GetAllByParams(sellerId, offerId, substr)
 	if err != nil {
 		ctx.Status(fiber.StatusInternalServerError)
 		return ctx.SendString(err.Error())

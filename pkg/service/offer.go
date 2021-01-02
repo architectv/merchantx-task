@@ -22,12 +22,12 @@ func NewOfferService(repo repository.Offer) *OfferService {
 	return &OfferService{repo: repo}
 }
 
-func (s *OfferService) Get(sellerId, offerId int, substr string) ([]*model.Offer, error) {
+func (s *OfferService) GetAllByParams(sellerId, offerId int, substr string) ([]*model.Offer, error) {
 	offers, err := s.repo.GetAllByParams(sellerId, offerId, substr)
 	return offers, err
 }
 
-func (s *OfferService) Put(sellerId int, filename string) (*model.Statistics, error) {
+func (s *OfferService) PutWithFile(sellerId int, filename string) (*model.Statistics, error) {
 	stat := new(model.Statistics)
 	if err := s.processXlsx(sellerId, filename, stat); err != nil {
 		return nil, err
