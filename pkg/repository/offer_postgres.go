@@ -56,7 +56,8 @@ func (r *OfferPostgres) GetAllByParams(sellerId, offerId int, substr string) ([]
 	}
 
 	if substr != "" {
-		setValues = append(setValues, fmt.Sprintf("name ILIKE '%%$%d%%'", argId))
+		setValues = append(setValues, fmt.Sprintf("name ILIKE $%d", argId))
+		substr = "%" + substr + "%"
 		args = append(args, substr)
 		argId++
 	}

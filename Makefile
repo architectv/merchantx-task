@@ -6,7 +6,7 @@ run:
 
 # WARNING: need to create database 'postgres_test' in postgres localhost
 run_test:
-	go test ./... -coverprofile cover.out
+	go test ./... -cover
 	go test -tags=e2e
 
 migrateup:

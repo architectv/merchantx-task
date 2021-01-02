@@ -189,8 +189,9 @@ func TestOfferPostgres_GetAllByParams(t *testing.T) {
 				rows := sqlmock.NewRows([]string{"seller_id", "offer_id", "name", "price", "quantity", "available"}).
 					AddRow(args.sellerId, args.offerId, "test name", 1000, 100, true)
 
+				substr := "%" + args.substr + "%"
 				mock.ExpectQuery(fmt.Sprintf("SELECT (.+) FROM %s WHERE (.+)", offersTable)).
-					WithArgs(args.sellerId, args.offerId, args.substr).WillReturnRows(rows)
+					WithArgs(args.sellerId, args.offerId, substr).WillReturnRows(rows)
 			},
 			want: []*model.Offer{
 				{1, 1, "test name", 1000, 100, true},
@@ -225,8 +226,9 @@ func TestOfferPostgres_GetAllByParams(t *testing.T) {
 				rows := sqlmock.NewRows([]string{"seller_id", "offer_id", "name", "price", "quantity", "available"}).
 					AddRow(1, args.offerId, "test name", 1000, 100, true)
 
+				substr := "%" + args.substr + "%"
 				mock.ExpectQuery(fmt.Sprintf("SELECT (.+) FROM %s WHERE (.+)", offersTable)).
-					WithArgs(args.offerId, args.substr).WillReturnRows(rows)
+					WithArgs(args.offerId, substr).WillReturnRows(rows)
 			},
 			want: []*model.Offer{
 				{1, 1, "test name", 1000, 100, true},
@@ -243,8 +245,9 @@ func TestOfferPostgres_GetAllByParams(t *testing.T) {
 				rows := sqlmock.NewRows([]string{"seller_id", "offer_id", "name", "price", "quantity", "available"}).
 					AddRow(args.sellerId, 1, "test name", 1000, 100, true)
 
+				substr := "%" + args.substr + "%"
 				mock.ExpectQuery(fmt.Sprintf("SELECT (.+) FROM %s WHERE (.+)", offersTable)).
-					WithArgs(args.sellerId, args.substr).WillReturnRows(rows)
+					WithArgs(args.sellerId, substr).WillReturnRows(rows)
 			},
 			want: []*model.Offer{
 				{1, 1, "test name", 1000, 100, true},
@@ -260,8 +263,9 @@ func TestOfferPostgres_GetAllByParams(t *testing.T) {
 			},
 			mock: func(args args) {
 				rows := sqlmock.NewRows([]string{"seller_id", "offer_id", "name", "price", "quantity", "available"})
+				substr := "%" + args.substr + "%"
 				mock.ExpectQuery(fmt.Sprintf("SELECT (.+) FROM %s WHERE (.+)", offersTable)).
-					WithArgs(args.sellerId, args.offerId, args.substr).WillReturnRows(rows)
+					WithArgs(args.sellerId, args.offerId, substr).WillReturnRows(rows)
 			},
 			want:    nil,
 			wantErr: false,
@@ -274,8 +278,9 @@ func TestOfferPostgres_GetAllByParams(t *testing.T) {
 				substr:   "test",
 			},
 			mock: func(args args) {
+				substr := "%" + args.substr + "%"
 				mock.ExpectQuery(fmt.Sprintf("SELECT (.+) FROM %s WHERE (.+)", offersTable)).
-					WithArgs(args.sellerId, args.offerId, args.substr).WillReturnError(fmt.Errorf("some error"))
+					WithArgs(args.sellerId, args.offerId, substr).WillReturnError(fmt.Errorf("some error"))
 			},
 			wantErr: true,
 		},
