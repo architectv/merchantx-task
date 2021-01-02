@@ -1,5 +1,7 @@
 # Тестовое задание Merchant Experience
 
+[![Build Status](https://travis-ci.com/architectv/merchantx-task.svg?token=fKJi943rZDkZWG4i8spC&branch=main)](https://travis-ci.com/architectv/merchantx-task)
+
 <!-- ToC start -->
 # Содержание
 
