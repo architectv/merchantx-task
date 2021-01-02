@@ -13,7 +13,7 @@ const (
 	PasswordTestDB = "1234"
 	HostTestDB     = "localhost"
 	PortTestDB     = "5432"
-	DBnameTestDB   = "merchantx"
+	DBnameTestDB   = "postgres_test"
 	SslmodeTestDB  = "disable"
 	TestDir        = "test/data/"
 	UpTestDBFile   = "scripts/000001_init.up.sql"
@@ -40,12 +40,4 @@ func PrepareTestDatabase(prefix string) (*sqlx.DB, error) {
 	db.MustExec(string(down))
 	db.MustExec(string(schema))
 	return db, err
-}
-
-func ClearTestDatabase(db *sqlx.DB, prefix string) {
-	down, err := ioutil.ReadFile(prefix + DownTestDBFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	db.MustExec(string(down))
 }

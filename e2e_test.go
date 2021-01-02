@@ -25,7 +25,6 @@ func Test_E2E_App(t *testing.T) {
 		log.Fatalf("failed to initialize db: %s", err.Error())
 	}
 	defer db.Close()
-	// defer test.ClearTestDatabase(db, prefix)
 
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)

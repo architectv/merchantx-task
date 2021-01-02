@@ -80,7 +80,6 @@ func TestOfferService_PutWithFile(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	defer db.Close()
-	defer test.ClearTestDatabase(db, prefix)
 
 	type args struct {
 		sellerId int

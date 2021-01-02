@@ -11,7 +11,7 @@ RUN apt-get -y install postgresql-client
 
 # make wait-for-postgres.sh executable
 RUN sed -i -e 's/\r$//' *.sh
-RUN chmod +x wait-for-postgres.sh
+RUN chmod +x *.sh
 
 # build go app
 RUN go mod download -x
