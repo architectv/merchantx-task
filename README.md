@@ -41,8 +41,8 @@
 - Конфигурация приложения - библиотека [viper](https://github.com/spf13/viper).
 - Реализация Graceful Shutdown.
 - Запуск из Docker.
-- Юнит-тестирование уровней бизнес-логики и взаимодействия с БД классическим способом и с помощью моков - библиотеки [testify](github.com/stretchr/testify), [mock](github.com/golang/mock).
-- Сквозное (E2E) тестирование - BDD фреймворк [goconvey](github.com/smartystreets/goconvey).
+- Юнит-тестирование уровней бизнес-логики и взаимодействия с БД классическим способом и с помощью моков - библиотеки [testify](https://github.com/stretchr/testify), [mock](https://github.com/golang/mock).
+- Сквозное (E2E) тестирование - BDD фреймворк [goconvey](https://github.com/smartystreets/goconvey).
 - Непрерывная интеграция, запуск тестов в Travis CI.
 
 **Структура проекта:**
@@ -121,7 +121,7 @@ curl --location --request PUT 'localhost:8001/api/offers/' \
     "link": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmOaivfZYZqJCgnS6Dnjw8kLvRtgMELipP9r7m8nE_Te6N06glcNaGyNVw73f0VuKi8mgoErSploTZ/pub?output=xlsx"
 }'
 ```
-**Ответ:**
+**Тело ответа:**
 ```
 {
     "create_count": 5,
@@ -137,7 +137,7 @@ curl --location --request PUT 'localhost:8001/api/offers/' \
 ```
 $ curl GET localhost:8001/api/offers/?id=1
 ```
-**Ответ:**
+**Тело ответа:**
 ```
 [
     {
@@ -177,7 +177,7 @@ $ curl GET localhost:8001/api/offers/?id=1
 ```
 $ curl GET localhost:8001/api/offers/?id=1&substr=теле
 ```
-**Ответ:**
+**Тело ответа:**
 ```
 [
     {
