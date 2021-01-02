@@ -14,4 +14,4 @@ jobs:
     - stage: test
       script:
         - go test ./... -coverprofile cover.out # unit tests
-        - go test -tags=e2e ./... # e2e tests
+        - go test -tags=e2e # e2e tests

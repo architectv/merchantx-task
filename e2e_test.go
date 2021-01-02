@@ -59,7 +59,7 @@ func Test_E2E_App(t *testing.T) {
 
 			resp, err := app.Test(req, -1)
 			body, bodyErr := ioutil.ReadAll(resp.Body)
-			fmt.Println(string(body))
+
 			Convey("Then should be Ok", func() {
 				So(err, ShouldBeNil)
 				So(bodyErr, ShouldBeNil)
