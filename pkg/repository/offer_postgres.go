@@ -16,6 +16,38 @@ func NewOfferPostgres(db *sqlx.DB) *OfferPostgres {
 	return &OfferPostgres{db: db}
 }
 
+func (r *OfferPostgres) GetStat(id int) (*model.Statistics, error) {
+	stat := new(model.Statistics)
+	query := fmt.Sprintf(`SELECT * FROM %s WHERE id=$1`, statsTable)
+	err := r.db.Get(stat, query, id)
+
+	return stat, err
+}
+
+func (r *OfferPostgres) CreateStat() (int, error) {
+	var id int
+	query := fmt.Sprintf(
+		`INSERT INTO %s (status, create_count, update_count, delete_count, error_count)
+		VALUES ('doing', 0, 0, 0, 0) RETURNING id`, statsTable)
+	row := r.db.QueryRow(query)
+	if err := row.Scan(&id); err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func (r *OfferPostgres) UpdateStat(stat *model.Statistics) error {
+	query := fmt.Sprintf(
+		`UPDATE %s SET
+		status=$1, create_count=$2, update_count=$3, delete_count=$4, error_count=$5
+		WHERE id=$6`, statsTable)
+	_, err := r.db.Exec(query, stat.Status, stat.CreateCount, stat.UpdateCount,
+		stat.DeleteCount, stat.ErrorCount, stat.Id)
+
+	return err
+}
+
 func (r *OfferPostgres) Create(input *model.Offer) error {
 	query := fmt.Sprintf(
 		`INSERT INTO %s (seller_id, offer_id, name, price, quantity, available)

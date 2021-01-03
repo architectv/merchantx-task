@@ -7,7 +7,10 @@ import (
 
 type Offer interface {
 	GetAllByParams(sellerId, offerId int, substr string) ([]*model.Offer, error)
-	PutWithFile(sellerId int, filename string) (*model.Statistics, error)
+	PutWithFile(sellerId, statId int, filename string) error
+	GetStat(id int) (*model.Statistics, error)
+	CreateStat() (int, error)
+	ErrorStat(id int, status string) error
 }
 
 type Service struct {

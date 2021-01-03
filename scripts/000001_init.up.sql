@@ -7,3 +7,12 @@ CREATE TABLE offers (
     available boolean NOT NULL,
     UNIQUE (seller_id, offer_id)
 );
+
+CREATE TABLE stats (
+    id serial PRIMARY KEY,
+    status varchar NOT NULL,
+    create_count int NOT NULL CHECK (create_count >= 0),
+    update_count int NOT NULL CHECK (update_count >= 0),
+    delete_count int NOT NULL CHECK (delete_count >= 0),
+    error_count int NOT NULL CHECK (error_count >= 0)
+);

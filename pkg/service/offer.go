@@ -22,18 +22,38 @@ func NewOfferService(repo repository.Offer) *OfferService {
 	return &OfferService{repo: repo}
 }
 
+func (s *OfferService) GetStat(id int) (*model.Statistics, error) {
+	stat, err := s.repo.GetStat(id)
+	return stat, err
+}
+
+func (s *OfferService) CreateStat() (int, error) {
+	id, err := s.repo.CreateStat()
+	return id, err
+}
+
+func (s *OfferService) ErrorStat(id int, status string) error {
+	stat := &model.Statistics{Id: id, Status: status}
+	err := s.repo.UpdateStat(stat)
+	return err
+}
+
 func (s *OfferService) GetAllByParams(sellerId, offerId int, substr string) ([]*model.Offer, error) {
 	offers, err := s.repo.GetAllByParams(sellerId, offerId, substr)
 	return offers, err
 }
 
-func (s *OfferService) PutWithFile(sellerId int, filename string) (*model.Statistics, error) {
-	stat := new(model.Statistics)
+func (s *OfferService) PutWithFile(sellerId, statId int, filename string) error {
+	stat := &model.Statistics{Id: statId}
 	if err := s.processXlsx(sellerId, filename, stat); err != nil {
-		return nil, err
+		stat.Status = "error while processing xlsx"
+		s.repo.UpdateStat(stat)
+		return err
 	}
+	stat.Status = "done"
+	err := s.repo.UpdateStat(stat)
 
-	return stat, nil
+	return err
 }
 
 func (s *OfferService) isExist(sellerId, offerId int) bool {

@@ -21,5 +21,9 @@ func (h *Handler) InitRoutes(router fiber.Router) {
 			offers.Put("/", h.putOffers)
 			offers.Get("/", h.getOffers)
 		}
+		stats := api.Group("/stats")
+		{
+			stats.Get("/:id", h.getStat)
+		}
 	}
 }

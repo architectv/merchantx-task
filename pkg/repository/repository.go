@@ -11,6 +11,9 @@ type Offer interface {
 	GetAllByParams(sellerId, offerId int, substr string) ([]*model.Offer, error)
 	Update(input *model.Offer) error
 	Delete(sellerId, offerId int) error
+	GetStat(id int) (*model.Statistics, error)
+	CreateStat() (int, error)
+	UpdateStat(stat *model.Statistics) error
 }
 
 type Repository struct {
